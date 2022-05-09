@@ -11,4 +11,6 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY . /code
 
+EXPOSE 8080
+
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
