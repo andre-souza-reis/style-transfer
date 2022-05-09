@@ -1,5 +1,5 @@
 # uvicorn main:app --reload --port 8080
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, File
 from fastapi.responses import StreamingResponse
 import numpy as np
 from utils import process_image
@@ -12,15 +12,15 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
-@app.post("/uploadfile/")
-async def create_upload_file(img: UploadFile, sty:UploadFile):
+@app.post("/files/")
+async def create_file(img: bytes = File(...), sty: bytes = File(...)):
     
-    image = np.asarray(bytearray(img.file.read()), dtype="uint8")
+    image = np.asarray(bytearray(img))
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = (image/255).astype(np.float32)
 
-    style = np.asarray(bytearray(sty.file.read()), dtype="uint8")
+    style = np.asarray(bytearray(sty))
     style = cv2.imdecode(style, cv2.IMREAD_COLOR)
     style = cv2.cvtColor(style, cv2.COLOR_BGR2RGB)
     style = (style/255).astype(np.float32)
