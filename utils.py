@@ -1,10 +1,9 @@
-from matplotlib import gridspec
-import matplotlib.pylab as plt
 import tensorflow as tf
-import numpy as np
 import tensorflow_hub as hub
-import random
-import os
+
+# Download the style bottleneck and transfer networks
+hub_module = hub.load(
+  'https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
 
 def crop_center(image):
   # Returns a cropped square image.
@@ -34,32 +33,21 @@ def load_image(image, image_size=(256, 256)):
   img = tf.image.resize(img, image_size, preserve_aspect_ratio=True)
   return img
 
-def process_image(image):
-  # Download the style bottleneck and transfer networks
-  hub_module = hub.load(
-    'https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
+def process_image(image, style):
 
   # Preferred content and image sizes
   content_image_size = 384
   style_image_size = 256
 
-  # Selecting a random file as the first style picture
-  style_counter = random.randrange(len(os.listdir("./Style_Reference_Images")))
-
   # Preparing the input image
   content_img = load_image(image, (content_image_size, content_image_size))
 
-  # Choose the random image in the sequence
-  style_name = os.listdir(
-      "./Style_Reference_Images")[style_counter % len(os.listdir("./Style_Reference_Images"))]
-
   # Preparing the style image
-  style_img = load_local_image(
-      f"./Style_Reference_Images/{style_name}", (style_image_size, style_image_size))
+  style_img = load_image(style, (style_image_size, style_image_size))
 
   # Stylize the content image using the style bottleneck.
   stylized_image = hub_module(tf.constant(
       content_img), tf.constant(style_img))[0]
 
   # Image processed
-  return stylized_image.numpy()[0]
+  return stylized_image.numpy()[0]*255
