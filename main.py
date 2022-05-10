@@ -1,12 +1,21 @@
 # uvicorn main:app --reload --port 8080
 from fastapi import FastAPI, File
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 from utils import process_image
 from io import BytesIO
 import cv2
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
