@@ -1,6 +1,6 @@
 numpy==1.19.2
 opencv_python==4.5.5.64
-tensorflow-cpu==2.6.0
+tensorflow-cpu==2.9.0
 fastapi>=0.68.0,<0.69.0
 pydantic>=1.8.0,<2.0.0
 uvicorn>=0.15.0,<0.16.0
