@@ -1,9 +1,7 @@
 import tensorflow as tf
-import tensorflow_hub as hub
 
-# Download the style bottleneck and transfer networks
-hub_module = hub.load(
-  'https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
+# Load model from local files
+hub_module = tf.saved_model.load('./model')
 
 def crop_center(image):
   # Returns a cropped square image.
@@ -15,19 +13,10 @@ def crop_center(image):
   image = tf.image.crop_to_bounding_box(image, offset_y, offset_x, new_shape, new_shape)
   return image
 
-def load_local_image(image_url, image_size=(256, 256)):
-  # Loads and preprocesses images.
-
-  # Load and convert to float32 numpy array, add batch dimension, and normalize to range [0, 1].
-  img = tf.io.decode_image(tf.io.read_file(image_url), channels=3, dtype=tf.float32)[tf.newaxis, ...]
-  img = crop_center(img)
-  img = tf.image.resize(img, image_size, preserve_aspect_ratio=True)
-  return img
-
 def load_image(image, image_size=(256, 256)):
   # Loads and preprocesses images.
 
-  # Load and convert to float32 numpy array, add batch dimension, and normalize to range [0, 1].
+  # Adding batch dimension, cropping center and resizing.
   img = image[tf.newaxis, ...]
   img = crop_center(img)
   img = tf.image.resize(img, image_size, preserve_aspect_ratio=True)

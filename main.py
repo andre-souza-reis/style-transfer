@@ -24,19 +24,19 @@ async def root():
 @app.post("/files/")
 async def create_file(img: bytes = File(...), sty: bytes = File(...)):
     
-    image = np.asarray(bytearray(img))
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = (image/255).astype(np.float32)
+    image = np.asarray(bytearray(img))                  # Image from byte to array
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)       # Converting array to image format
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)      # Converting BGR to RGB
+    image = (image/255).astype(np.float32)              # From range 0-255 to 0-1
 
-    style = np.asarray(bytearray(sty))
-    style = cv2.imdecode(style, cv2.IMREAD_COLOR)
-    style = cv2.cvtColor(style, cv2.COLOR_BGR2RGB)
-    style = (style/255).astype(np.float32)
+    style = np.asarray(bytearray(sty))                  # Image from byte to array
+    style = cv2.imdecode(style, cv2.IMREAD_COLOR)       # Converting array to image format
+    style = cv2.cvtColor(style, cv2.COLOR_BGR2RGB)      # Converting BGR to RGB
+    style = (style/255).astype(np.float32)              # From range 0-255 to 0-1
 
-    processed_image = process_image(image, style)
+    processed_image = process_image(image, style)       # Processing images
 
-    processed_image = cv2.cvtColor(processed_image, cv2.COLOR_RGB2BGR)
-    res, im_png = cv2.imencode(".jpeg", processed_image)
+    processed_image = cv2.cvtColor(processed_image, cv2.COLOR_RGB2BGR)  # Converting RGB to GBR
+    res, im_png = cv2.imencode(".jpeg", processed_image)                # Enconding to the jpeg format
 
     return StreamingResponse(BytesIO(im_png.tobytes()), media_type="image/jpeg")
